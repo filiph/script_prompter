@@ -44,6 +44,22 @@ void main() {
       expect(PromptTransformer.convertToFirstLetters('   \n  '), '   \n  ');
     });
 
+    test('preserves stage instructions starting with > and - verbatim', () {
+      const input =
+          '> Look directly into camera 1.\n'
+          'I am Bond, James Bond.\n'
+          '  - Pause for dramatic effect\n'
+          'Also, Řeřicha is my other name.';
+      final result = PromptTransformer.convertToFirstLetters(input);
+      expect(
+        result,
+        '> Look directly into camera 1.\n'
+        'I a B, J B.\n'
+        '  - Pause for dramatic effect\n'
+        'A, Ř i m o n.',
+      );
+    });
+
     test('works via PromptTransformer.transform', () {
       const input = 'I am Bond, James Bond. Also, Řeřicha is my other name.';
       final result = PromptTransformer.transform(input, PromptMode.firstLetters);
@@ -104,6 +120,23 @@ void main() {
     test('handles empty and whitespace-only strings', () {
       expect(PromptTransformer.convertToFirstWords(''), '');
       expect(PromptTransformer.convertToFirstWords('   \n\n  '), '');
+    });
+
+    test('preserves stage instructions starting with > and - verbatim', () {
+      const input =
+          '> Intro shot: Wide angle\n'
+          'Welcome to the channel everyone. Today we are exploring script prompter.\n'
+          '  - Show title card on screen\n'
+          'Let us get started right away!';
+      final result = PromptTransformer.convertToFirstWords(input);
+      expect(
+        result,
+        '> Intro shot: Wide angle\n'
+        'Welcome to the channel everyone.\n'
+        'Today we are exploring script...\n'
+        '  - Show title card on screen\n'
+        'Let us get started right...',
+      );
     });
 
     test('works via PromptTransformer.transform', () {

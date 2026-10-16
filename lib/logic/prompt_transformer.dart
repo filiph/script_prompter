@@ -9,17 +9,31 @@ enum PromptMode {
 }
 
 class PromptTransformer {
-  /// Converts text by replacing each word token with its first grapheme cluster,
-  /// preserving all punctuation, whitespace, and formatting.
-  static String convertToFirstLetters(String text) {
-    if (text.isEmpty) return text;
-    return text.replaceAllMapped(
-      RegExp(r'[\p{L}\p{N}]+', unicode: true),
-      (match) => match.group(0)!.characters.first,
-    );
+  /// Checks whether a line is a stage instruction.
+  /// Stage instructions begin with `> ` or optional whitespace followed by `- `.
+  static bool isStageInstruction(String line) {
+    return RegExp(r'^(?:> |\s*- )').hasMatch(line);
   }
 
-  /// Extracts the first few words of each sentence in each paragraph.
+  /// Converts text by replacing each word token with its first grapheme cluster,
+  /// preserving all punctuation, whitespace, and formatting, while keeping
+  /// stage instructions verbatim.
+  static String convertToFirstLetters(String text) {
+    if (text.isEmpty) return text;
+    final lines = text.split('\n');
+    return lines.map((line) {
+      if (isStageInstruction(line)) {
+        return line;
+      }
+      return line.replaceAllMapped(
+        RegExp(r'[\p{L}\p{N}]+', unicode: true),
+        (match) => match.group(0)!.characters.first,
+      );
+    }).join('\n');
+  }
+
+  /// Extracts the first few words of each sentence in each paragraph,
+  /// while keeping stage instructions verbatim.
   /// Sentences within a paragraph are placed on their own lines,
   /// and truncated sentences have '...' appended unless they already end
   /// in terminal punctuation ('.', '?', '!', or '...').
@@ -32,42 +46,70 @@ class PromptTransformer {
     final transformedParagraphs = <String>[];
 
     for (final paragraph in paragraphs) {
-      final trimmedPara = paragraph.trim();
-      if (trimmedPara.isEmpty) {
+      if (paragraph.trim().isEmpty) {
         transformedParagraphs.add('');
         continue;
       }
 
-      final sentences = _splitSentences(trimmedPara);
-      final shortenedSentences = <String>[];
+      final lines = paragraph.split('\n');
+      final outputLines = <String>[];
+      final spokenBuffer = <String>[];
 
-      for (final rawSentence in sentences) {
-        final sentence = rawSentence.trim();
-        if (sentence.isEmpty) continue;
-
-        final words = sentence.split(RegExp(r'\s+'));
-        String shortened;
-        if (words.length <= maxWords) {
-          shortened = words.join(' ');
-        } else {
-          shortened = words.take(maxWords).join(' ');
+      void flushSpoken() {
+        if (spokenBuffer.isNotEmpty) {
+          final spokenText = spokenBuffer.join(' ').trim();
+          if (spokenText.isNotEmpty) {
+            outputLines.addAll(_processSpokenText(spokenText, maxWords));
+          }
+          spokenBuffer.clear();
         }
-
-        if (shortened.isNotEmpty &&
-            !shortened.endsWith('.') &&
-            !shortened.endsWith('?') &&
-            !shortened.endsWith('!') &&
-            !shortened.endsWith('...')) {
-          shortened = '$shortened...';
-        }
-
-        shortenedSentences.add(shortened);
       }
 
-      transformedParagraphs.add(shortenedSentences.join('\n'));
+      for (final line in lines) {
+        if (isStageInstruction(line)) {
+          flushSpoken();
+          outputLines.add(line);
+        } else {
+          if (line.trim().isNotEmpty) {
+            spokenBuffer.add(line.trim());
+          }
+        }
+      }
+      flushSpoken();
+
+      transformedParagraphs.add(outputLines.join('\n'));
     }
 
     return transformedParagraphs.join('\n\n');
+  }
+
+  static List<String> _processSpokenText(String text, int maxWords) {
+    final sentences = _splitSentences(text);
+    final shortenedSentences = <String>[];
+
+    for (final rawSentence in sentences) {
+      final sentence = rawSentence.trim();
+      if (sentence.isEmpty) continue;
+
+      final words = sentence.split(RegExp(r'\s+'));
+      String shortened;
+      if (words.length <= maxWords) {
+        shortened = words.join(' ');
+      } else {
+        shortened = words.take(maxWords).join(' ');
+      }
+
+      if (shortened.isNotEmpty &&
+          !shortened.endsWith('.') &&
+          !shortened.endsWith('?') &&
+          !shortened.endsWith('!') &&
+          !shortened.endsWith('...')) {
+        shortened = '$shortened...';
+      }
+
+      shortenedSentences.add(shortened);
+    }
+    return shortenedSentences;
   }
 
   static String transform(String text, PromptMode mode) {

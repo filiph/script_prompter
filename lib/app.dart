@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
+import 'clipboard.dart';
 import 'logic/prompt_transformer.dart';
 
 const String defaultSampleScript = '''
@@ -22,11 +25,33 @@ class AppState extends State<App> {
   String inputScript = defaultSampleScript;
   String outputPrompts = '';
   PromptMode selectedMode = PromptMode.firstLetters;
+  bool _copied = false;
+  Timer? _copyResetTimer;
 
   void _convert() {
     setState(() {
       outputPrompts = PromptTransformer.transform(inputScript, selectedMode);
     });
+  }
+
+  void _copyToClipboard() {
+    if (outputPrompts.isEmpty) return;
+    copyToClipboard(outputPrompts);
+    _copyResetTimer?.cancel();
+    setState(() {
+      _copied = true;
+    });
+    _copyResetTimer = Timer(const Duration(seconds: 2), () {
+      setState(() {
+        _copied = false;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _copyResetTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -76,26 +101,59 @@ class AppState extends State<App> {
         ]),
       ]),
       div(id: 'output', classes: 'editor-section', [
-        label([
+        div(classes: 'section-header', [
           h2([.text('Prompts')]),
-          textarea(
-            id: 'shortened',
-            rows: 10,
-            cols: 80,
-            disabled: true,
-            [
-              .text(
-                outputPrompts.isEmpty ? 'Output will appear here.' : outputPrompts,
-              ),
-            ],
+          button(
+            id: 'copy',
+            classes: 'copy-button ${_copied ? "copied" : ""}',
+            disabled: outputPrompts.isEmpty,
+            onClick: _copyToClipboard,
+            [.text(_copied ? 'Copied!' : 'Copy to clipboard')],
           ),
         ]),
+        pre(
+          id: 'shortened',
+          classes: 'prompts-output ${outputPrompts.isEmpty ? "placeholder" : ""}',
+          [
+            .text(
+              outputPrompts.isEmpty ? 'Output will appear here.' : outputPrompts,
+            ),
+          ],
+        ),
       ]),
     ]);
   }
 
   @css
   static List<StyleRule> get styles => [
+    css.media(MediaQuery.print(), [
+      css('html, body').styles(
+        backgroundColor: const Color('#ffffff'),
+        padding: .zero,
+        margin: .zero,
+      ),
+      css('.prompter-container').styles(
+        maxWidth: 100.percent,
+        padding: .zero,
+        margin: .zero,
+      ),
+      css('.subtitle, .mode-selector-group, #input, .copy-button').styles(
+        display: .none,
+      ),
+      css('.editor-section').styles(
+        margin: .zero,
+      ),
+      css('.prompts-output').styles(
+        border: .unset,
+        padding: .zero,
+        margin: .zero,
+        minHeight: .unset,
+        backgroundColor: Colors.transparent,
+        color: const Color('#000000'),
+        fontSize: 1.1.rem,
+        lineHeight: 1.6.em,
+      ),
+    ]),
     css('.prompter-container', [
       css('&').styles(
         maxWidth: 60.em,
@@ -150,6 +208,17 @@ class AppState extends State<App> {
         css('&').styles(
           margin: .only(bottom: 1.5.rem),
         ),
+        css('.section-header', [
+          css('&').styles(
+            display: .flex,
+            justifyContent: .spaceBetween,
+            alignItems: .center,
+            margin: .only(bottom: 0.5.rem),
+          ),
+          css('h2').styles(
+            margin: .zero,
+          ),
+        ]),
         css('h2').styles(
           margin: .only(bottom: 0.5.rem),
           color: const Color('#2d3748'),
@@ -171,11 +240,55 @@ class AppState extends State<App> {
           border: .all(style: .solid, color: const Color('#3182ce'), width: 1.px),
           outline: .unset,
         ),
-        css('textarea[disabled]').styles(
-          cursor: .notAllowed,
-          color: const Color('#2d3748'),
-          backgroundColor: const Color('#f7fafc'),
-        ),
+        css('.copy-button', [
+          css('&').styles(
+            padding: .symmetric(horizontal: 0.8.rem, vertical: 0.4.rem),
+            border: .all(style: .solid, color: const Color('#cbd5e0'), width: 1.px),
+            radius: .all(.circular(6.px)),
+            cursor: .pointer,
+            transition: const Transition('all', duration: Duration(milliseconds: 150)),
+            color: const Color('#4a5568'),
+            fontSize: 0.9.rem,
+            fontWeight: .w600,
+            backgroundColor: const Color('#ffffff'),
+          ),
+          css('&:hover:not([disabled])').styles(
+            backgroundColor: const Color('#edf2f7'),
+            color: const Color('#2d3748'),
+            border: .all(style: .solid, color: const Color('#a0aec0'), width: 1.px),
+          ),
+          css('&[disabled]').styles(
+            cursor: .notAllowed,
+            opacity: 0.6,
+          ),
+          css('&.copied').styles(
+            backgroundColor: const Color('#ebf8ff'),
+            color: const Color('#2b6cb0'),
+            border: .all(style: .solid, color: const Color('#3182ce'), width: 1.px),
+          ),
+        ]),
+        css('.prompts-output', [
+          css('&').styles(
+            width: 100.percent,
+            minHeight: 160.px,
+            padding: .all(0.8.rem),
+            margin: .zero,
+            boxSizing: .borderBox,
+            border: .all(style: .solid, color: const Color('#cbd5e0'), width: 1.px),
+            radius: .all(.circular(6.px)),
+            fontFamily: const .list([FontFamily('Roboto'), FontFamilies.sansSerif]),
+            fontSize: 1.rem,
+            lineHeight: 1.5.em,
+            whiteSpace: .preWrap,
+            raw: {'word-break': 'break-word', 'overflow-wrap': 'break-word'},
+            backgroundColor: const Color('#f7fafc'),
+            color: const Color('#2d3748'),
+          ),
+          css('&.placeholder').styles(
+            color: const Color('#a0aec0'),
+            fontStyle: .italic,
+          ),
+        ]),
       ]),
       css('.action-bar', [
         css('&').styles(
