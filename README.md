@@ -49,10 +49,17 @@ you need to run:
 
 ```shell
 jaspr clean
-jaspr build
+jaspr build --dart-define=BASE_HREF=/prompter/
 ```
 
 And then you replace the contents of `~/dev/filiphnet/old/prompter/`
 with the built project in `build/jaspr/`.
+
+```shell
+rm -r ~/dev/filiphnet/old/prompter/*
+cp -R build/jaspr/* ~/dev/filiphnet/old/prompter/
+```
+
 You have to deploy the site afterwards, obviously.
+
 
