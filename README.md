@@ -42,3 +42,17 @@ Output:
 I a B, J B. A, Ř i m o n.
 ```
 
+## Deploy
+
+In order to deploy this to https://filiph.net/prompter/,
+you need to run:
+
+```shell
+jaspr clean
+jaspr build
+```
+
+And then you replace the contents of `~/dev/filiphnet/old/prompter/`
+with the built project in `build/jaspr/`.
+You have to deploy the site afterwards, obviously.
+
