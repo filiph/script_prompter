@@ -174,13 +174,21 @@ void main() {
 
     test('estimates duration based on word count and words per minute', () {
       expect(PromptTransformer.estimateDuration(0), Duration.zero);
-      expect(PromptTransformer.estimateDuration(140), const Duration(seconds: 60));
-      expect(PromptTransformer.estimateDuration(70), const Duration(seconds: 30));
-      expect(PromptTransformer.estimateDuration(210), const Duration(seconds: 90));
+      expect(PromptTransformer.estimateDuration(190), const Duration(seconds: 60));
+      expect(PromptTransformer.estimateDuration(95), const Duration(seconds: 30));
+      expect(PromptTransformer.estimateDuration(285), const Duration(seconds: 90));
       // Custom rate
       expect(
         PromptTransformer.estimateDuration(100, wordsPerMinute: 100),
         const Duration(seconds: 60),
+      );
+      expect(
+        PromptTransformer.estimateDuration(100, wordsPerMinute: 0),
+        Duration.zero,
+      );
+      expect(
+        PromptTransformer.estimateDuration(100, wordsPerMinute: -50),
+        Duration.zero,
       );
     });
 

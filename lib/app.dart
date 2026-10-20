@@ -117,6 +117,9 @@ class AppState extends State<App> {
               alignItems: .baseline,
               raw: {'gap': '0.75rem', 'flex-wrap': 'wrap'},
             ),
+            css('.wpm-input').styles(
+              width: 8.em,
+            ),
           ]),
           css('.script-stats', [
             css('&').styles(
@@ -238,6 +241,10 @@ class AppState extends State<App> {
 
   Timer? _copyResetTimer;
 
+  String _wpmInput = PromptTransformer.wordsPerMinute.toString();
+
+  int _wordsPerMinute = PromptTransformer.wordsPerMinute;
+
   int _wordCount = PromptTransformer.countWords(defaultSampleScript);
 
   String _estimatedDuration = PromptTransformer.formatDuration(
@@ -305,6 +312,23 @@ class AppState extends State<App> {
                 ),
               ],
             ),
+            .text(' at '),
+            input(
+              type: .number,
+              classes: 'wpm-input',
+              attributes: {'min': '10', 'step': '10'},
+              value: _wpmInput,
+              onInput: (value) {
+                _wpmInput = value?.toString() ?? '';
+              },
+            ),
+            .element(
+              tag: 'abbr',
+              attributes: {'title': 'Words Per Minute'},
+              children: [
+                .text(' WPM'),
+              ],
+            ),
           ]),
           button(
             id: 'copy',
@@ -337,7 +361,14 @@ class AppState extends State<App> {
     setState(() {
       outputPrompts = PromptTransformer.transform(inputScript, selectedMode);
       _wordCount = PromptTransformer.countWords(inputScript);
-      final duration = PromptTransformer.estimateDuration(_wordCount);
+      final parsedWpm = int.tryParse(_wpmInput);
+      _wordsPerMinute = (parsedWpm != null && parsedWpm > 0)
+          ? parsedWpm
+          : PromptTransformer.wordsPerMinute;
+      final duration = PromptTransformer.estimateDuration(
+        _wordCount,
+        wordsPerMinute: _wordsPerMinute,
+      );
       _estimatedDuration = PromptTransformer.formatDuration(duration);
     });
   }

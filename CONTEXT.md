@@ -24,6 +24,10 @@ _Avoid_: Token count, character count, script length
 The projected speaking time calculated from the word count using a configurable words-per-minute rate.
 _Avoid_: Script length, reading time, runtime estimate
 
+**Words Per Minute (WPM)**:
+The configurable speaking rate used to calculate Estimated Duration from Word Count.
+_Avoid_: Reading speed, pace, tempo
+
 **First Letters Mode**:
 A transformation mode reducing every word token to its initial letter or character while preserving punctuation, whitespace, and stage instructions.
 _Avoid_: Letter mode, acronym mode
