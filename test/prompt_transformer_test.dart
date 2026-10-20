@@ -3,17 +3,23 @@ import 'package:test/test.dart';
 
 void main() {
   group('PromptTransformer - First letters mode', () {
-    test('transforms basic English sentence preserving punctuation and spaces', () {
-      const input = 'I am Bond, James Bond.';
-      final result = PromptTransformer.convertToFirstLetters(input);
-      expect(result, 'I a B, J B.');
-    });
+    test(
+      'transforms basic English sentence preserving punctuation and spaces',
+      () {
+        const input = 'I am Bond, James Bond.';
+        final result = PromptTransformer.convertToFirstLetters(input);
+        expect(result, 'I a B, J B.');
+      },
+    );
 
-    test('handles Czech diacritics and unicode grapheme clusters correctly', () {
-      const input = 'Also, Řeřicha is my other name.';
-      final result = PromptTransformer.convertToFirstLetters(input);
-      expect(result, 'A, Ř i m o n.');
-    });
+    test(
+      'handles Czech diacritics and unicode grapheme clusters correctly',
+      () {
+        const input = 'Also, Řeřicha is my other name.';
+        final result = PromptTransformer.convertToFirstLetters(input);
+        expect(result, 'A, Ř i m o n.');
+      },
+    );
 
     test('handles Czech pangram', () {
       const input = 'Příliš žluťoučký kůň úpěl ďábelské ódy.';
@@ -62,7 +68,10 @@ void main() {
 
     test('works via PromptTransformer.transform', () {
       const input = 'I am Bond, James Bond. Also, Řeřicha is my other name.';
-      final result = PromptTransformer.transform(input, PromptMode.firstLetters);
+      final result = PromptTransformer.transform(
+        input,
+        PromptMode.firstLetters,
+      );
       expect(result, 'I a B, J B. A, Ř i m o n.');
     });
   });
@@ -94,20 +103,27 @@ void main() {
       expect(result, 'One two three four five...');
     });
 
-    test('preserves short sentences ending in period, question mark, or exclamation', () {
-      const input = 'Hello there. How are you? All good!';
-      final result = PromptTransformer.convertToFirstWords(input);
-      expect(result, 'Hello there.\nHow are you?\nAll good!');
-    });
+    test(
+      'preserves short sentences ending in period, question mark, or exclamation',
+      () {
+        const input = 'Hello there. How are you? All good!';
+        final result = PromptTransformer.convertToFirstWords(input);
+        expect(result, 'Hello there.\nHow are you?\nAll good!');
+      },
+    );
 
-    test('appends ellipsis to short sentences without terminal punctuation', () {
-      const input = 'Hello there world';
-      final result = PromptTransformer.convertToFirstWords(input);
-      expect(result, 'Hello there world...');
-    });
+    test(
+      'appends ellipsis to short sentences without terminal punctuation',
+      () {
+        const input = 'Hello there world';
+        final result = PromptTransformer.convertToFirstWords(input);
+        expect(result, 'Hello there world...');
+      },
+    );
 
     test('handles multiple paragraphs separated by blank lines', () {
-      const input = 'Paragraph one sentence one. Paragraph one sentence two.\n\nParagraph two single sentence.';
+      const input =
+          'Paragraph one sentence one. Paragraph one sentence two.\n\nParagraph two single sentence.';
       final result = PromptTransformer.convertToFirstWords(input);
       expect(
         result,
@@ -161,22 +177,40 @@ void main() {
       expect(PromptTransformer.countWords(input), 11);
     });
 
-    test('returns 0 words for empty, whitespace-only, or instruction-only scripts', () {
-      expect(PromptTransformer.countWords(''), 0);
-      expect(PromptTransformer.countWords('   \n\n  \t '), 0);
-      expect(PromptTransformer.countWords('> Look at camera\n  - Dramatic pause'), 0);
-    });
+    test(
+      'returns 0 words for empty, whitespace-only, or instruction-only scripts',
+      () {
+        expect(PromptTransformer.countWords(''), 0);
+        expect(PromptTransformer.countWords('   \n\n  \t '), 0);
+        expect(
+          PromptTransformer.countWords('> Look at camera\n  - Dramatic pause'),
+          0,
+        );
+      },
+    );
 
-    test('counts words correctly across multiple lines, whitespace, and tabs', () {
-      const input = 'One   two \t three\n\nfour   five\n\nsix';
-      expect(PromptTransformer.countWords(input), 6);
-    });
+    test(
+      'counts words correctly across multiple lines, whitespace, and tabs',
+      () {
+        const input = 'One   two \t three\n\nfour   five\n\nsix';
+        expect(PromptTransformer.countWords(input), 6);
+      },
+    );
 
     test('estimates duration based on word count and words per minute', () {
       expect(PromptTransformer.estimateDuration(0), Duration.zero);
-      expect(PromptTransformer.estimateDuration(190), const Duration(seconds: 60));
-      expect(PromptTransformer.estimateDuration(95), const Duration(seconds: 30));
-      expect(PromptTransformer.estimateDuration(285), const Duration(seconds: 90));
+      expect(
+        PromptTransformer.estimateDuration(190),
+        const Duration(seconds: 60),
+      );
+      expect(
+        PromptTransformer.estimateDuration(95),
+        const Duration(seconds: 30),
+      );
+      expect(
+        PromptTransformer.estimateDuration(285),
+        const Duration(seconds: 90),
+      );
       // Custom rate
       expect(
         PromptTransformer.estimateDuration(100, wordsPerMinute: 100),
@@ -194,11 +228,26 @@ void main() {
 
     test('formats duration using compact unit omission', () {
       expect(PromptTransformer.formatDuration(Duration.zero), '0 sec');
-      expect(PromptTransformer.formatDuration(const Duration(seconds: 45)), '45 sec');
-      expect(PromptTransformer.formatDuration(const Duration(seconds: 60)), '1 min');
-      expect(PromptTransformer.formatDuration(const Duration(seconds: 90)), '1 min 30 sec');
-      expect(PromptTransformer.formatDuration(const Duration(seconds: 120)), '2 min');
-      expect(PromptTransformer.formatDuration(const Duration(seconds: 125)), '2 min 5 sec');
+      expect(
+        PromptTransformer.formatDuration(const Duration(seconds: 45)),
+        '45 sec',
+      );
+      expect(
+        PromptTransformer.formatDuration(const Duration(seconds: 60)),
+        '1 min',
+      );
+      expect(
+        PromptTransformer.formatDuration(const Duration(seconds: 90)),
+        '1 min 30 sec',
+      );
+      expect(
+        PromptTransformer.formatDuration(const Duration(seconds: 120)),
+        '2 min',
+      );
+      expect(
+        PromptTransformer.formatDuration(const Duration(seconds: 125)),
+        '2 min 5 sec',
+      );
     });
   });
 }

@@ -15,9 +15,7 @@ import 'main.server.options.dart';
 
 void main() {
   // Initializes the server environment with the generated default options.
-  Jaspr.initializeApp(
-    options: defaultServerOptions,
-  );
+  Jaspr.initializeApp(options: defaultServerOptions);
 
   // Starts the app.
   //
@@ -37,7 +35,10 @@ void main() {
           minHeight: 100.vh,
           padding: .zero,
           margin: .zero,
-          fontFamily: const .list([FontFamily('Roboto'), FontFamilies.sansSerif]),
+          fontFamily: const .list([
+            FontFamily('Roboto'),
+            FontFamilies.sansSerif,
+          ]),
           backgroundColor: const Color('#f7fafc'),
         ),
       ],

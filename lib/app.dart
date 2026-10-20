@@ -28,17 +28,13 @@ class AppState extends State<App> {
         margin: .zero,
         backgroundColor: const Color('#ffffff'),
       ),
-      css('.prompter-container').styles(
-        maxWidth: 100.percent,
-        padding: .zero,
-        margin: .zero,
-      ),
-      css('.subtitle, .mode-selector-group, #input, .copy-button, .script-stats').styles(
-        display: .none,
-      ),
-      css('.editor-section').styles(
-        margin: .zero,
-      ),
+      css(
+        '.prompter-container',
+      ).styles(maxWidth: 100.percent, padding: .zero, margin: .zero),
+      css(
+        '.subtitle, .mode-selector-group, #input, .copy-button, .script-stats',
+      ).styles(display: .none),
+      css('.editor-section').styles(margin: .zero),
       css('.prompts-output').styles(
         minHeight: .unset,
         padding: .zero,
@@ -82,7 +78,10 @@ class AppState extends State<App> {
             border: .unset,
             radius: .all(.circular(6.px)),
             cursor: .pointer,
-            transition: const Transition('all', duration: Duration(milliseconds: 150)),
+            transition: const Transition(
+              'all',
+              duration: Duration(milliseconds: 150),
+            ),
             color: const Color('#4a5568'),
             fontSize: 1.rem,
             fontWeight: .w600,
@@ -101,9 +100,7 @@ class AppState extends State<App> {
         ]),
       ]),
       css('.editor-section', [
-        css('&').styles(
-          margin: .only(bottom: 1.5.rem),
-        ),
+        css('&').styles(margin: .only(bottom: 1.5.rem)),
         css('.section-header', [
           css('&').styles(
             display: .flex,
@@ -117,9 +114,7 @@ class AppState extends State<App> {
               alignItems: .baseline,
               raw: {'gap': '0.75rem', 'flex-wrap': 'wrap'},
             ),
-            css('.wpm-input').styles(
-              width: 8.em,
-            ),
+            css('.wpm-input').styles(width: 8.em),
           ]),
           css('.script-stats', [
             css('&').styles(
@@ -128,9 +123,7 @@ class AppState extends State<App> {
               fontWeight: .w400,
             ),
           ]),
-          css('h2').styles(
-            margin: .zero,
-          ),
+          css('h2').styles(margin: .zero),
         ]),
         css('h2').styles(
           margin: .only(bottom: 0.5.rem),
@@ -142,24 +135,42 @@ class AppState extends State<App> {
           minHeight: 160.px,
           padding: .all(0.8.rem),
           boxSizing: .borderBox,
-          border: .all(style: .solid, color: const Color('#cbd5e0'), width: 1.px),
+          border: .all(
+            style: .solid,
+            color: const Color('#cbd5e0'),
+            width: 1.px,
+          ),
           radius: .all(.circular(6.px)),
-          fontFamily: const .list([FontFamily('Roboto'), FontFamilies.sansSerif]),
+          fontFamily: const .list([
+            FontFamily('Roboto'),
+            FontFamilies.sansSerif,
+          ]),
           fontSize: 1.rem,
           lineHeight: 1.5.em,
           backgroundColor: const Color('#ffffff'),
         ),
         css('textarea:focus').styles(
-          border: .all(style: .solid, color: const Color('#3182ce'), width: 1.px),
+          border: .all(
+            style: .solid,
+            color: const Color('#3182ce'),
+            width: 1.px,
+          ),
           outline: .unset,
         ),
         css('.copy-button', [
           css('&').styles(
             padding: .symmetric(horizontal: 0.8.rem, vertical: 0.4.rem),
-            border: .all(style: .solid, color: const Color('#cbd5e0'), width: 1.px),
+            border: .all(
+              style: .solid,
+              color: const Color('#cbd5e0'),
+              width: 1.px,
+            ),
             radius: .all(.circular(6.px)),
             cursor: .pointer,
-            transition: const Transition('all', duration: Duration(milliseconds: 150)),
+            transition: const Transition(
+              'all',
+              duration: Duration(milliseconds: 150),
+            ),
             color: const Color('#4a5568'),
             fontSize: 0.9.rem,
             fontWeight: .w600,
@@ -174,12 +185,13 @@ class AppState extends State<App> {
             color: const Color('#2d3748'),
             backgroundColor: const Color('#edf2f7'),
           ),
-          css('&[disabled]').styles(
-            opacity: 0.6,
-            cursor: .notAllowed,
-          ),
+          css('&[disabled]').styles(opacity: 0.6, cursor: .notAllowed),
           css('&.copied').styles(
-            border: .all(style: .solid, color: const Color('#3182ce'), width: 1.px),
+            border: .all(
+              style: .solid,
+              color: const Color('#3182ce'),
+              width: 1.px,
+            ),
             color: const Color('#2b6cb0'),
             backgroundColor: const Color('#ebf8ff'),
           ),
@@ -191,41 +203,46 @@ class AppState extends State<App> {
             padding: .all(0.8.rem),
             margin: .zero,
             boxSizing: .borderBox,
-            border: .all(style: .solid, color: const Color('#cbd5e0'), width: 1.px),
+            border: .all(
+              style: .solid,
+              color: const Color('#cbd5e0'),
+              width: 1.px,
+            ),
             radius: .all(.circular(6.px)),
             color: const Color('#2d3748'),
-            fontFamily: const .list([FontFamily('Roboto'), FontFamilies.sansSerif]),
+            fontFamily: const .list([
+              FontFamily('Roboto'),
+              FontFamilies.sansSerif,
+            ]),
             fontSize: 1.rem,
             lineHeight: 1.5.em,
             whiteSpace: .preWrap,
             backgroundColor: const Color('#f7fafc'),
             raw: {'word-break': 'break-word', 'overflow-wrap': 'break-word'},
           ),
-          css('&.placeholder').styles(
-            color: const Color('#a0aec0'),
-            fontStyle: .italic,
-          ),
+          css(
+            '&.placeholder',
+          ).styles(color: const Color('#a0aec0'), fontStyle: .italic),
         ]),
       ]),
       css('.action-bar', [
-        css('&').styles(
-          margin: .only(top: 0.8.rem),
-        ),
+        css('&').styles(margin: .only(top: 0.8.rem)),
         css('.convert-button', [
           css('&').styles(
             padding: .symmetric(horizontal: 1.5.rem, vertical: 0.75.rem),
             border: .unset,
             radius: .all(.circular(6.px)),
             cursor: .pointer,
-            transition: const Transition('background-color', duration: Duration(milliseconds: 150)),
+            transition: const Transition(
+              'background-color',
+              duration: Duration(milliseconds: 150),
+            ),
             color: const Color('#ffffff'),
             fontSize: 1.1.rem,
             fontWeight: .bold,
             backgroundColor: const Color('#2b6cb0'),
           ),
-          css('&:hover').styles(
-            backgroundColor: const Color('#2c5282'),
-          ),
+          css('&:hover').styles(backgroundColor: const Color('#2c5282')),
         ]),
       ]),
     ]),
@@ -257,14 +274,11 @@ class AppState extends State<App> {
   Component build(BuildContext context) {
     return div(id: 'matrioska', classes: 'prompter-container', [
       h1([.text('Script Prompter')]),
-      p(
-        classes: 'subtitle',
-        [
-          .text(
-            'Takes a video script (or other prose) and provides shortened cue-card prompts.',
-          ),
-        ],
-      ),
+      p(classes: 'subtitle', [
+        .text(
+          'Takes a video script (or other prose) and provides shortened cue-card prompts.',
+        ),
+      ]),
       div(classes: 'mode-selector-group', [
         for (final mode in PromptMode.values)
           button(
@@ -291,27 +305,20 @@ class AppState extends State<App> {
           ),
         ]),
         div(classes: 'action-bar', [
-          button(
-            id: 'submit',
-            classes: 'convert-button',
-            onClick: _convert,
-            [.text('Convert')],
-          ),
+          button(id: 'submit', classes: 'convert-button', onClick: _convert, [
+            .text('Convert'),
+          ]),
         ]),
       ]),
       div(id: 'output', classes: 'editor-section', [
         div(classes: 'section-header', [
           div(classes: 'header-title-container', [
             h2([.text('Prompts')]),
-            span(
-              id: 'script-stats',
-              classes: 'script-stats',
-              [
-                .text(
-                  '$_wordCount ${_wordCount == 1 ? "word" : "words"} · ~$_estimatedDuration',
-                ),
-              ],
-            ),
+            span(id: 'script-stats', classes: 'script-stats', [
+              .text(
+                '$_wordCount ${_wordCount == 1 ? "word" : "words"} · ~$_estimatedDuration',
+              ),
+            ]),
             .text(' at '),
             input(
               type: .number,
@@ -325,9 +332,7 @@ class AppState extends State<App> {
             .element(
               tag: 'abbr',
               attributes: {'title': 'Words Per Minute'},
-              children: [
-                .text(' WPM'),
-              ],
+              children: [.text(' WPM')],
             ),
           ]),
           button(
@@ -340,10 +345,13 @@ class AppState extends State<App> {
         ]),
         pre(
           id: 'shortened',
-          classes: 'prompts-output ${outputPrompts.isEmpty ? "placeholder" : ""}',
+          classes:
+              'prompts-output ${outputPrompts.isEmpty ? "placeholder" : ""}',
           [
             .text(
-              outputPrompts.isEmpty ? 'Output will appear here.' : outputPrompts,
+              outputPrompts.isEmpty
+                  ? 'Output will appear here.'
+                  : outputPrompts,
             ),
           ],
         ),

@@ -182,7 +182,8 @@ class PromptTransformer {
 
       if (char == '.' || char == '?' || char == '!') {
         // Check if next char is whitespace or end of string
-        if (i == paragraph.length - 1 || RegExp(r'\s').hasMatch(paragraph[i + 1])) {
+        if (i == paragraph.length - 1 ||
+            RegExp(r'\s').hasMatch(paragraph[i + 1])) {
           sentences.add(buffer.toString().trim());
           buffer.clear();
         }
