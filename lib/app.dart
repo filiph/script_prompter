@@ -27,10 +27,19 @@ class AppState extends State<App> {
   PromptMode selectedMode = PromptMode.firstLetters;
   bool _copied = false;
   Timer? _copyResetTimer;
+  int _wordCount = PromptTransformer.countWords(defaultSampleScript);
+  String _estimatedDuration = PromptTransformer.formatDuration(
+    PromptTransformer.estimateDuration(
+      PromptTransformer.countWords(defaultSampleScript),
+    ),
+  );
 
   void _convert() {
     setState(() {
       outputPrompts = PromptTransformer.transform(inputScript, selectedMode);
+      _wordCount = PromptTransformer.countWords(inputScript);
+      final duration = PromptTransformer.estimateDuration(_wordCount);
+      _estimatedDuration = PromptTransformer.formatDuration(duration);
     });
   }
 
@@ -102,7 +111,18 @@ class AppState extends State<App> {
       ]),
       div(id: 'output', classes: 'editor-section', [
         div(classes: 'section-header', [
-          h2([.text('Prompts')]),
+          div(classes: 'header-title-container', [
+            h2([.text('Prompts')]),
+            span(
+              id: 'script-stats',
+              classes: 'script-stats',
+              [
+                .text(
+                  '$_wordCount ${_wordCount == 1 ? "word" : "words"} · ~$_estimatedDuration',
+                ),
+              ],
+            ),
+          ]),
           button(
             id: 'copy',
             classes: 'copy-button ${_copied ? "copied" : ""}',
@@ -137,7 +157,7 @@ class AppState extends State<App> {
         padding: .zero,
         margin: .zero,
       ),
-      css('.subtitle, .mode-selector-group, #input, .copy-button').styles(
+      css('.subtitle, .mode-selector-group, #input, .copy-button, .script-stats').styles(
         display: .none,
       ),
       css('.editor-section').styles(
@@ -215,6 +235,20 @@ class AppState extends State<App> {
             alignItems: .center,
             margin: .only(bottom: 0.5.rem),
           ),
+          css('.header-title-container', [
+            css('&').styles(
+              display: .flex,
+              alignItems: .baseline,
+              raw: {'gap': '0.75rem', 'flex-wrap': 'wrap'},
+            ),
+          ]),
+          css('.script-stats', [
+            css('&').styles(
+              color: const Color('#718096'),
+              fontSize: 0.9.rem,
+              fontWeight: .w400,
+            ),
+          ]),
           css('h2').styles(
             margin: .zero,
           ),

@@ -145,4 +145,52 @@ void main() {
       expect(result, 'Short sentence.\n\nAnother short sentence.');
     });
   });
+
+  group('PromptTransformer - Word count and speaking duration', () {
+    test('counts words in basic English text', () {
+      const input = 'I am Bond, James Bond. Also, Řeřicha is my other name.';
+      expect(PromptTransformer.countWords(input), 11);
+    });
+
+    test('ignores stage instructions when counting words', () {
+      const input =
+          '> Look directly into camera 1.\n'
+          'I am Bond, James Bond.\n'
+          '  - Pause for dramatic effect\n'
+          'Also, Řeřicha is my other name.';
+      expect(PromptTransformer.countWords(input), 11);
+    });
+
+    test('returns 0 words for empty, whitespace-only, or instruction-only scripts', () {
+      expect(PromptTransformer.countWords(''), 0);
+      expect(PromptTransformer.countWords('   \n\n  \t '), 0);
+      expect(PromptTransformer.countWords('> Look at camera\n  - Dramatic pause'), 0);
+    });
+
+    test('counts words correctly across multiple lines, whitespace, and tabs', () {
+      const input = 'One   two \t three\n\nfour   five\n\nsix';
+      expect(PromptTransformer.countWords(input), 6);
+    });
+
+    test('estimates duration based on word count and words per minute', () {
+      expect(PromptTransformer.estimateDuration(0), Duration.zero);
+      expect(PromptTransformer.estimateDuration(140), const Duration(seconds: 60));
+      expect(PromptTransformer.estimateDuration(70), const Duration(seconds: 30));
+      expect(PromptTransformer.estimateDuration(210), const Duration(seconds: 90));
+      // Custom rate
+      expect(
+        PromptTransformer.estimateDuration(100, wordsPerMinute: 100),
+        const Duration(seconds: 60),
+      );
+    });
+
+    test('formats duration using compact unit omission', () {
+      expect(PromptTransformer.formatDuration(Duration.zero), '0 sec');
+      expect(PromptTransformer.formatDuration(const Duration(seconds: 45)), '45 sec');
+      expect(PromptTransformer.formatDuration(const Duration(seconds: 60)), '1 min');
+      expect(PromptTransformer.formatDuration(const Duration(seconds: 90)), '1 min 30 sec');
+      expect(PromptTransformer.formatDuration(const Duration(seconds: 120)), '2 min');
+      expect(PromptTransformer.formatDuration(const Duration(seconds: 125)), '2 min 5 sec');
+    });
+  });
 }

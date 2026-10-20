@@ -16,6 +16,14 @@ _Avoid_: Output text, summary, card
 A line within a script indicating non-spoken actions or directions (prefixed by `> ` or optional whitespace with `- `), preserved verbatim in all prompts.
 _Avoid_: Stage direction, comment, director note
 
+**Word Count**:
+The total count of spoken word tokens in a script, excluding all stage instructions.
+_Avoid_: Token count, character count, script length
+
+**Estimated Duration**:
+The projected speaking time calculated from the word count using a configurable words-per-minute rate.
+_Avoid_: Script length, reading time, runtime estimate
+
 **First Letters Mode**:
 A transformation mode reducing every word token to its initial letter or character while preserving punctuation, whitespace, and stage instructions.
 _Avoid_: Letter mode, acronym mode
