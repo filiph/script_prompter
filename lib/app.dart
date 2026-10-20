@@ -7,8 +7,6 @@ import 'clipboard.dart';
 import 'logic/prompt_transformer.dart';
 
 const String defaultSampleScript = '''
-I am Bond, James Bond. Also, Řeřicha is my other name.
-
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. The first few words of each sentence should remind you of your memorized content. But you won't be distracted by the words on the teleprompter. You won't _read_ those words, which will make your performance more natural.
 
 Try converting this script now!''';
@@ -22,46 +20,231 @@ class App extends StatefulComponent {
 }
 
 class AppState extends State<App> {
+  @css
+  static List<StyleRule> get styles => [
+    css.media(MediaQuery.print(), [
+      css('html, body').styles(
+        padding: .zero,
+        margin: .zero,
+        backgroundColor: const Color('#ffffff'),
+      ),
+      css('.prompter-container').styles(
+        maxWidth: 100.percent,
+        padding: .zero,
+        margin: .zero,
+      ),
+      css('.subtitle, .mode-selector-group, #input, .copy-button, .script-stats').styles(
+        display: .none,
+      ),
+      css('.editor-section').styles(
+        margin: .zero,
+      ),
+      css('.prompts-output').styles(
+        minHeight: .unset,
+        padding: .zero,
+        margin: .zero,
+        border: .unset,
+        color: const Color('#000000'),
+        fontSize: 1.1.rem,
+        lineHeight: 1.6.em,
+        backgroundColor: Colors.transparent,
+      ),
+    ]),
+    css('.prompter-container', [
+      css('&').styles(
+        maxWidth: 60.em,
+        padding: .all(2.rem),
+        margin: .symmetric(horizontal: .auto, vertical: .zero),
+        boxSizing: .borderBox,
+      ),
+      css('h1').styles(
+        margin: .only(bottom: 0.5.rem),
+        color: const Color('#1a202c'),
+        fontSize: 2.4.rem,
+      ),
+      css('.subtitle').styles(
+        margin: .only(bottom: 1.5.rem),
+        color: const Color('#4a5568'),
+        fontSize: 1.1.rem,
+        lineHeight: 1.5.em,
+      ),
+      css('.mode-selector-group', [
+        css('&').styles(
+          display: .inlineFlex,
+          padding: .all(4.px),
+          margin: .only(bottom: 1.5.rem),
+          radius: .all(.circular(8.px)),
+          backgroundColor: const Color('#edf2f7'),
+        ),
+        css('.mode-button', [
+          css('&').styles(
+            padding: .symmetric(horizontal: 1.2.rem, vertical: 0.6.rem),
+            border: .unset,
+            radius: .all(.circular(6.px)),
+            cursor: .pointer,
+            transition: const Transition('all', duration: Duration(milliseconds: 150)),
+            color: const Color('#4a5568'),
+            fontSize: 1.rem,
+            fontWeight: .w600,
+            backgroundColor: Colors.transparent,
+          ),
+          css('&.active').styles(
+            shadow: BoxShadow(
+              offsetX: 0.px,
+              offsetY: 1.px,
+              blur: 3.px,
+              color: const Color('#0000001a'),
+            ),
+            color: const Color('#2b6cb0'),
+            backgroundColor: const Color('#ffffff'),
+          ),
+        ]),
+      ]),
+      css('.editor-section', [
+        css('&').styles(
+          margin: .only(bottom: 1.5.rem),
+        ),
+        css('.section-header', [
+          css('&').styles(
+            display: .flex,
+            margin: .only(bottom: 0.5.rem),
+            justifyContent: .spaceBetween,
+            alignItems: .center,
+          ),
+          css('.header-title-container', [
+            css('&').styles(
+              display: .flex,
+              alignItems: .baseline,
+              raw: {'gap': '0.75rem', 'flex-wrap': 'wrap'},
+            ),
+          ]),
+          css('.script-stats', [
+            css('&').styles(
+              color: const Color('#718096'),
+              fontSize: 0.9.rem,
+              fontWeight: .w400,
+            ),
+          ]),
+          css('h2').styles(
+            margin: .zero,
+          ),
+        ]),
+        css('h2').styles(
+          margin: .only(bottom: 0.5.rem),
+          color: const Color('#2d3748'),
+          fontSize: 1.4.rem,
+        ),
+        css('textarea').styles(
+          width: 100.percent,
+          minHeight: 160.px,
+          padding: .all(0.8.rem),
+          boxSizing: .borderBox,
+          border: .all(style: .solid, color: const Color('#cbd5e0'), width: 1.px),
+          radius: .all(.circular(6.px)),
+          fontFamily: const .list([FontFamily('Roboto'), FontFamilies.sansSerif]),
+          fontSize: 1.rem,
+          lineHeight: 1.5.em,
+          backgroundColor: const Color('#ffffff'),
+        ),
+        css('textarea:focus').styles(
+          border: .all(style: .solid, color: const Color('#3182ce'), width: 1.px),
+          outline: .unset,
+        ),
+        css('.copy-button', [
+          css('&').styles(
+            padding: .symmetric(horizontal: 0.8.rem, vertical: 0.4.rem),
+            border: .all(style: .solid, color: const Color('#cbd5e0'), width: 1.px),
+            radius: .all(.circular(6.px)),
+            cursor: .pointer,
+            transition: const Transition('all', duration: Duration(milliseconds: 150)),
+            color: const Color('#4a5568'),
+            fontSize: 0.9.rem,
+            fontWeight: .w600,
+            backgroundColor: const Color('#ffffff'),
+          ),
+          css('&:hover:not([disabled])').styles(
+            border: .all(
+              color: const Color('#a0aec0'),
+              style: .solid,
+              width: 1.px,
+            ),
+            color: const Color('#2d3748'),
+            backgroundColor: const Color('#edf2f7'),
+          ),
+          css('&[disabled]').styles(
+            opacity: 0.6,
+            cursor: .notAllowed,
+          ),
+          css('&.copied').styles(
+            border: .all(style: .solid, color: const Color('#3182ce'), width: 1.px),
+            color: const Color('#2b6cb0'),
+            backgroundColor: const Color('#ebf8ff'),
+          ),
+        ]),
+        css('.prompts-output', [
+          css('&').styles(
+            width: 100.percent,
+            minHeight: 160.px,
+            padding: .all(0.8.rem),
+            margin: .zero,
+            boxSizing: .borderBox,
+            border: .all(style: .solid, color: const Color('#cbd5e0'), width: 1.px),
+            radius: .all(.circular(6.px)),
+            color: const Color('#2d3748'),
+            fontFamily: const .list([FontFamily('Roboto'), FontFamilies.sansSerif]),
+            fontSize: 1.rem,
+            lineHeight: 1.5.em,
+            whiteSpace: .preWrap,
+            backgroundColor: const Color('#f7fafc'),
+            raw: {'word-break': 'break-word', 'overflow-wrap': 'break-word'},
+          ),
+          css('&.placeholder').styles(
+            color: const Color('#a0aec0'),
+            fontStyle: .italic,
+          ),
+        ]),
+      ]),
+      css('.action-bar', [
+        css('&').styles(
+          margin: .only(top: 0.8.rem),
+        ),
+        css('.convert-button', [
+          css('&').styles(
+            padding: .symmetric(horizontal: 1.5.rem, vertical: 0.75.rem),
+            border: .unset,
+            radius: .all(.circular(6.px)),
+            cursor: .pointer,
+            transition: const Transition('background-color', duration: Duration(milliseconds: 150)),
+            color: const Color('#ffffff'),
+            fontSize: 1.1.rem,
+            fontWeight: .bold,
+            backgroundColor: const Color('#2b6cb0'),
+          ),
+          css('&:hover').styles(
+            backgroundColor: const Color('#2c5282'),
+          ),
+        ]),
+      ]),
+    ]),
+  ];
+
   String inputScript = defaultSampleScript;
+
   String outputPrompts = '';
+
   PromptMode selectedMode = PromptMode.firstLetters;
+
   bool _copied = false;
+
   Timer? _copyResetTimer;
+
   int _wordCount = PromptTransformer.countWords(defaultSampleScript);
+
   String _estimatedDuration = PromptTransformer.formatDuration(
     PromptTransformer.estimateDuration(
       PromptTransformer.countWords(defaultSampleScript),
     ),
   );
-
-  void _convert() {
-    setState(() {
-      outputPrompts = PromptTransformer.transform(inputScript, selectedMode);
-      _wordCount = PromptTransformer.countWords(inputScript);
-      final duration = PromptTransformer.estimateDuration(_wordCount);
-      _estimatedDuration = PromptTransformer.formatDuration(duration);
-    });
-  }
-
-  void _copyToClipboard() {
-    if (outputPrompts.isEmpty) return;
-    copyToClipboard(outputPrompts);
-    _copyResetTimer?.cancel();
-    setState(() {
-      _copied = true;
-    });
-    _copyResetTimer = Timer(const Duration(seconds: 2), () {
-      setState(() {
-        _copied = false;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _copyResetTimer?.cancel();
-    super.dispose();
-  }
 
   @override
   Component build(BuildContext context) {
@@ -144,207 +327,32 @@ class AppState extends State<App> {
     ]);
   }
 
-  @css
-  static List<StyleRule> get styles => [
-    css.media(MediaQuery.print(), [
-      css('html, body').styles(
-        backgroundColor: const Color('#ffffff'),
-        padding: .zero,
-        margin: .zero,
-      ),
-      css('.prompter-container').styles(
-        maxWidth: 100.percent,
-        padding: .zero,
-        margin: .zero,
-      ),
-      css('.subtitle, .mode-selector-group, #input, .copy-button, .script-stats').styles(
-        display: .none,
-      ),
-      css('.editor-section').styles(
-        margin: .zero,
-      ),
-      css('.prompts-output').styles(
-        border: .unset,
-        padding: .zero,
-        margin: .zero,
-        minHeight: .unset,
-        backgroundColor: Colors.transparent,
-        color: const Color('#000000'),
-        fontSize: 1.1.rem,
-        lineHeight: 1.6.em,
-      ),
-    ]),
-    css('.prompter-container', [
-      css('&').styles(
-        maxWidth: 60.em,
-        padding: .all(2.rem),
-        margin: .symmetric(horizontal: .auto, vertical: .zero),
-        boxSizing: .borderBox,
-      ),
-      css('h1').styles(
-        margin: .only(bottom: 0.5.rem),
-        color: const Color('#1a202c'),
-        fontSize: 2.4.rem,
-      ),
-      css('.subtitle').styles(
-        margin: .only(bottom: 1.5.rem),
-        color: const Color('#4a5568'),
-        fontSize: 1.1.rem,
-        lineHeight: 1.5.em,
-      ),
-      css('.mode-selector-group', [
-        css('&').styles(
-          display: .inlineFlex,
-          padding: .all(4.px),
-          margin: .only(bottom: 1.5.rem),
-          radius: .all(.circular(8.px)),
-          backgroundColor: const Color('#edf2f7'),
-        ),
-        css('.mode-button', [
-          css('&').styles(
-            padding: .symmetric(horizontal: 1.2.rem, vertical: 0.6.rem),
-            border: .unset,
-            radius: .all(.circular(6.px)),
-            cursor: .pointer,
-            transition: const Transition('all', duration: Duration(milliseconds: 150)),
-            color: const Color('#4a5568'),
-            fontSize: 1.rem,
-            fontWeight: .w600,
-            backgroundColor: Colors.transparent,
-          ),
-          css('&.active').styles(
-            shadow: BoxShadow(
-              offsetX: 0.px,
-              offsetY: 1.px,
-              blur: 3.px,
-              color: const Color('#0000001a'),
-            ),
-            color: const Color('#2b6cb0'),
-            backgroundColor: const Color('#ffffff'),
-          ),
-        ]),
-      ]),
-      css('.editor-section', [
-        css('&').styles(
-          margin: .only(bottom: 1.5.rem),
-        ),
-        css('.section-header', [
-          css('&').styles(
-            display: .flex,
-            justifyContent: .spaceBetween,
-            alignItems: .center,
-            margin: .only(bottom: 0.5.rem),
-          ),
-          css('.header-title-container', [
-            css('&').styles(
-              display: .flex,
-              alignItems: .baseline,
-              raw: {'gap': '0.75rem', 'flex-wrap': 'wrap'},
-            ),
-          ]),
-          css('.script-stats', [
-            css('&').styles(
-              color: const Color('#718096'),
-              fontSize: 0.9.rem,
-              fontWeight: .w400,
-            ),
-          ]),
-          css('h2').styles(
-            margin: .zero,
-          ),
-        ]),
-        css('h2').styles(
-          margin: .only(bottom: 0.5.rem),
-          color: const Color('#2d3748'),
-          fontSize: 1.4.rem,
-        ),
-        css('textarea').styles(
-          width: 100.percent,
-          minHeight: 160.px,
-          padding: .all(0.8.rem),
-          boxSizing: .borderBox,
-          border: .all(style: .solid, color: const Color('#cbd5e0'), width: 1.px),
-          radius: .all(.circular(6.px)),
-          fontFamily: const .list([FontFamily('Roboto'), FontFamilies.sansSerif]),
-          fontSize: 1.rem,
-          lineHeight: 1.5.em,
-          backgroundColor: const Color('#ffffff'),
-        ),
-        css('textarea:focus').styles(
-          border: .all(style: .solid, color: const Color('#3182ce'), width: 1.px),
-          outline: .unset,
-        ),
-        css('.copy-button', [
-          css('&').styles(
-            padding: .symmetric(horizontal: 0.8.rem, vertical: 0.4.rem),
-            border: .all(style: .solid, color: const Color('#cbd5e0'), width: 1.px),
-            radius: .all(.circular(6.px)),
-            cursor: .pointer,
-            transition: const Transition('all', duration: Duration(milliseconds: 150)),
-            color: const Color('#4a5568'),
-            fontSize: 0.9.rem,
-            fontWeight: .w600,
-            backgroundColor: const Color('#ffffff'),
-          ),
-          css('&:hover:not([disabled])').styles(
-            backgroundColor: const Color('#edf2f7'),
-            color: const Color('#2d3748'),
-            border: .all(style: .solid, color: const Color('#a0aec0'), width: 1.px),
-          ),
-          css('&[disabled]').styles(
-            cursor: .notAllowed,
-            opacity: 0.6,
-          ),
-          css('&.copied').styles(
-            backgroundColor: const Color('#ebf8ff'),
-            color: const Color('#2b6cb0'),
-            border: .all(style: .solid, color: const Color('#3182ce'), width: 1.px),
-          ),
-        ]),
-        css('.prompts-output', [
-          css('&').styles(
-            width: 100.percent,
-            minHeight: 160.px,
-            padding: .all(0.8.rem),
-            margin: .zero,
-            boxSizing: .borderBox,
-            border: .all(style: .solid, color: const Color('#cbd5e0'), width: 1.px),
-            radius: .all(.circular(6.px)),
-            fontFamily: const .list([FontFamily('Roboto'), FontFamilies.sansSerif]),
-            fontSize: 1.rem,
-            lineHeight: 1.5.em,
-            whiteSpace: .preWrap,
-            raw: {'word-break': 'break-word', 'overflow-wrap': 'break-word'},
-            backgroundColor: const Color('#f7fafc'),
-            color: const Color('#2d3748'),
-          ),
-          css('&.placeholder').styles(
-            color: const Color('#a0aec0'),
-            fontStyle: .italic,
-          ),
-        ]),
-      ]),
-      css('.action-bar', [
-        css('&').styles(
-          margin: .only(top: 0.8.rem),
-        ),
-        css('.convert-button', [
-          css('&').styles(
-            padding: .symmetric(horizontal: 1.5.rem, vertical: 0.75.rem),
-            border: .unset,
-            radius: .all(.circular(6.px)),
-            cursor: .pointer,
-            transition: const Transition('background-color', duration: Duration(milliseconds: 150)),
-            color: const Color('#ffffff'),
-            fontSize: 1.1.rem,
-            fontWeight: .bold,
-            backgroundColor: const Color('#2b6cb0'),
-          ),
-          css('&:hover').styles(
-            backgroundColor: const Color('#2c5282'),
-          ),
-        ]),
-      ]),
-    ]),
-  ];
+  @override
+  void dispose() {
+    _copyResetTimer?.cancel();
+    super.dispose();
+  }
+
+  void _convert() {
+    setState(() {
+      outputPrompts = PromptTransformer.transform(inputScript, selectedMode);
+      _wordCount = PromptTransformer.countWords(inputScript);
+      final duration = PromptTransformer.estimateDuration(_wordCount);
+      _estimatedDuration = PromptTransformer.formatDuration(duration);
+    });
+  }
+
+  void _copyToClipboard() {
+    if (outputPrompts.isEmpty) return;
+    copyToClipboard(outputPrompts);
+    _copyResetTimer?.cancel();
+    setState(() {
+      _copied = true;
+    });
+    _copyResetTimer = Timer(const Duration(seconds: 2), () {
+      setState(() {
+        _copied = false;
+      });
+    });
+  }
 }

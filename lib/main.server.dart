@@ -10,11 +10,8 @@ import 'package:jaspr/server.dart';
 
 // Imports the [App] component.
 import 'app.dart';
-
 // This file is generated automatically by Jaspr, do not remove or edit.
 import 'main.server.options.dart';
-
-const baseHref = String.fromEnvironment('BASE_HREF', defaultValue: '/');
 
 void main() {
   // Initializes the server environment with the generated default options.
@@ -48,3 +45,5 @@ void main() {
     ),
   );
 }
+
+const baseHref = String.fromEnvironment('BASE_HREF', defaultValue: '/');
