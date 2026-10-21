@@ -40,4 +40,4 @@ _Avoid_: Sentence mode, word truncation mode
 
 **Presenter**: "I added a stage instruction for the camera cue in the script, but I want to make sure it doesn't get abbreviated."
 **Developer**: "In both First Letters Mode and First Words Mode, any stage instruction prefixed with `> ` or `- ` is preserved verbatim in the generated prompt."
-**Presenter**: "And when I print the page for my cue cards, only the title and the prompt will appear on paper."
+**Presenter**: "And when I print the page for my cue cards, only the prompt will appear on paper."

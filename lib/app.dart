@@ -22,30 +22,6 @@ class App extends StatefulComponent {
 class AppState extends State<App> {
   @css
   static List<StyleRule> get styles => [
-    css.media(MediaQuery.print(), [
-      css('html, body').styles(
-        padding: .zero,
-        margin: .zero,
-        backgroundColor: const Color('#ffffff'),
-      ),
-      css(
-        '.prompter-container',
-      ).styles(maxWidth: 100.percent, padding: .zero, margin: .zero),
-      css(
-        '.subtitle, .mode-selector-group, #input, .copy-button, .script-stats',
-      ).styles(display: .none),
-      css('.editor-section').styles(margin: .zero),
-      css('.prompts-output').styles(
-        minHeight: .unset,
-        padding: .zero,
-        margin: .zero,
-        border: .unset,
-        color: const Color('#000000'),
-        fontSize: 1.1.rem,
-        lineHeight: 1.6.em,
-        backgroundColor: Colors.transparent,
-      ),
-    ]),
     css('.prompter-container', [
       css('&').styles(
         maxWidth: 60.em,
@@ -243,6 +219,42 @@ class AppState extends State<App> {
             backgroundColor: const Color('#2b6cb0'),
           ),
           css('&:hover').styles(backgroundColor: const Color('#2c5282')),
+        ]),
+      ]),
+    ]),
+    css.media(MediaQuery.print(), [
+      css('html, body').styles(
+        padding: .zero,
+        margin: .zero,
+        backgroundColor: const Color('#ffffff'),
+      ),
+      css('.prompter-container', [
+        css('&').styles(maxWidth: 100.percent, padding: .zero, margin: .zero),
+        css(
+          'h1, .subtitle, .mode-selector-group, #input',
+        ).styles(display: .none),
+        css('.editor-section', [
+          css('&').styles(margin: .zero),
+          css('.section-header').styles(display: .none),
+          css('.prompts-output', [
+            css('&').styles(
+              minHeight: .unset,
+              padding: .zero,
+              margin: .zero,
+              border: .unset,
+              color: const Color('#000000'),
+              fontFamily: const .list([
+                FontFamily('Georgia'),
+                FontFamily('Cambria'),
+                FontFamily('Times New Roman'),
+                FontFamily('Times'),
+                FontFamilies.serif,
+              ]),
+              fontSize: 5.rem,
+              lineHeight: 1.5.em,
+              backgroundColor: Colors.transparent,
+            ),
+          ]),
         ]),
       ]),
     ]),
