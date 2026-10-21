@@ -199,6 +199,8 @@ class AppState extends State<App> {
           css(
             '&.placeholder',
           ).styles(color: const Color('#a0aec0'), fontStyle: .italic),
+          css('.spoken-text').styles(fontSize: 1.5.rem),
+          css('.stage-instruction').styles(fontSize: 0.9.rem),
         ]),
       ]),
       css('.action-bar', [
@@ -250,9 +252,22 @@ class AppState extends State<App> {
                 FontFamily('Times'),
                 FontFamilies.serif,
               ]),
-              fontSize: 5.rem,
-              lineHeight: 1.5.em,
               backgroundColor: Colors.transparent,
+              raw: {'columns': '2', 'column-gap': '4rem'},
+            ),
+            css('.spoken-text').styles(
+              padding: .initial,
+              margin: .zero,
+              fontSize: 1.0.rem,
+              lineHeight: 1.5.em,
+              raw: {'break-inside': 'avoid'},
+            ),
+            css('.stage-instruction').styles(
+              padding: .initial,
+              margin: .zero,
+              fontSize: 0.5.rem,
+              lineHeight: 0.7.rem,
+              raw: {'break-inside': 'avoid'},
             ),
           ]),
         ]),
@@ -359,13 +374,7 @@ class AppState extends State<App> {
           id: 'shortened',
           classes:
               'prompts-output ${outputPrompts.isEmpty ? "placeholder" : ""}',
-          [
-            .text(
-              outputPrompts.isEmpty
-                  ? 'Output will appear here.'
-                  : outputPrompts,
-            ),
-          ],
+          _buildPromptComponents(),
         ),
       ]),
     ]);
@@ -375,6 +384,22 @@ class AppState extends State<App> {
   void dispose() {
     _copyResetTimer?.cancel();
     super.dispose();
+  }
+
+  List<Component> _buildPromptComponents() {
+    if (outputPrompts.isEmpty) {
+      return [.text('Output will appear here.')];
+    }
+    final lines = outputPrompts.split('\n');
+    return [
+      for (int i = 0; i < lines.length; i++)
+        span(
+          classes: PromptTransformer.isStageInstruction(lines[i])
+              ? 'stage-instruction'
+              : 'spoken-text',
+          [.text(i < lines.length - 1 ? '${lines[i]}\n' : lines[i])],
+        ),
+    ];
   }
 
   void _convert() {

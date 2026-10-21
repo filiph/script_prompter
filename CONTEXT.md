@@ -12,6 +12,10 @@ _Avoid_: Input text, source text, document
 The shortened cue text generated from a script to trigger memory without encouraging verbatim teleprompter reading.
 _Avoid_: Output text, summary, card
 
+**Spoken Text**:
+The spoken verbal portions of a script or prompt, rendered enlarged compared to stage instructions.
+_Avoid_: Spoken prompt, spoken words, dialogue
+
 **Stage Instruction**:
 A line within a script indicating non-spoken actions or directions (prefixed by `> ` or optional whitespace with `- `), preserved verbatim in all prompts.
 _Avoid_: Stage direction, comment, director note
