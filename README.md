@@ -44,8 +44,16 @@ I a B, J B. A, Ř i m o n.
 
 ## Deploy
 
-In order to deploy this to https://filiph.net/prompter/,
-you need to run:
+There's a `Makefile` so you can just run
+
+```shell
+make deploy
+```
+
+and follow instructions.
+
+
+### How to do it manually
 
 ```shell
 jaspr clean
