@@ -231,7 +231,7 @@ class AppState extends State<App> {
         backgroundColor: const Color('#ffffff'),
       ),
       css('.prompter-container', [
-        css('&').styles(maxWidth: 100.percent, padding: .zero, margin: .zero),
+        css('&').styles(maxWidth: 50.percent, padding: .zero, margin: .zero),
         css(
           'h1, .subtitle, .mode-selector-group, #input',
         ).styles(display: .none),
@@ -253,7 +253,6 @@ class AppState extends State<App> {
                 FontFamilies.serif,
               ]),
               backgroundColor: Colors.transparent,
-              raw: {'columns': '2', 'column-gap': '4rem'},
             ),
             css('.spoken-text').styles(
               padding: .initial,
